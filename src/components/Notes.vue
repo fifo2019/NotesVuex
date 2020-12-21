@@ -1,6 +1,10 @@
 <template>
   <div class="notes">
-    <div class="note" :class="{ full: !grid }" v-for="(note, index) in notes" :key="index">
+    <div class="note"
+      :class="[note.priority, { full: !grid }]"
+      v-for="(note, index) in notes"
+      :key="index"
+    >
       <div class="note-header">
         <p>{{ note.title }}</p>
         <p style="cursor: pointer" @click="removeNote(index)">x</p>
@@ -29,9 +33,8 @@
       }
     },
     methods: {
-      removeNote(index) {
-        console.log(`Note id - ${index} removed`)
-        this.$emit('remove', index)
+      async removeNote(index) {
+        await this.$store.dispatch('removeNote', index)
       }
     }
   }
@@ -45,7 +48,7 @@
     flex-wrap: wrap;
     padding: 40px 0;
   }
-
+  
   .note {
     width: 46%;
     padding: 18px 20px;
@@ -53,11 +56,13 @@
     background-color: #ffffff;
     transition: all .25s cubic-bezier(.02, .01, .47, 1);
     cursor: pointer;
+    
     &:hover {
       box-shadow: 0 30px 30px rgba(0, 0, 0, .04);
       transform: translate(0, -6px);
       transition-delay: 0s !important;
     }
+    
     &.full {
       width: 100%;
       display: flex;
@@ -65,31 +70,45 @@
       justify-content: center;
       align-items: center;
       text-align: center;
+      
       p {
         margin-right: 16px;
+        
         &.last-child {
           margin-right: 0;
         }
       }
     }
+    
+    &.standart {
+      box-shadow: 0 30px 30px rgba(0, 0, 0, .04);
+    }
+    
+    &.important {
+      box-shadow: 0 0 30px rgb(255, 235, 59 / 61%);
+    }
+    
+    &.critical {
+      box-shadow: 0 0 30px #F44336;
+    }
   }
-
+  
   .note-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    
     p {
       font-size: 22px;
       color: #402caf;
     }
   }
-
+  
   .note-body {
     p {
       margin: 20px 0;
     }
-
+    
     span {
       font-size: 14px;
       color: #999999;
