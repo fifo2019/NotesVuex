@@ -6,11 +6,38 @@
       :key="index"
     >
       <div class="note-header">
-        <p>{{ note.title }}</p>
+  
+        <p
+          @click="changeNote(index, 'title')"
+          v-show="!note.change.title"
+        >
+          {{ note.title }}
+        </p>
+        <input
+          type="text"
+          v-show="note.change.title"
+          v-model="note.change.title"
+          @keyup.enter="saveNote(index, 'title')"
+          @keyup.esc="exitChangeNote(index, 'title')"
+        >
+        
         <p style="cursor: pointer" @click="removeNote(index)">x</p>
       </div>
       <div class="note-body">
-        <p>{{ note.descr }}</p>
+        
+        <p
+          @click="changeNote(index, 'descr')"
+          v-show="!note.change.descr"
+        >
+          {{ note.descr }}
+        </p>
+        <textarea
+          v-model="note.change.descr"
+          v-show="note.change.descr"
+          @keyup.enter="saveNote(index, 'descr')"
+          @keyup.esc="exitChangeNote(index, 'descr')"
+        ></textarea>
+        
         <span>{{ note.date }}</span>
       </div>
     </div>
@@ -22,20 +49,29 @@
     name: "notes",
     props: {
       notes: {
-        type: Array, // Number, Array, Object, Boolean
+        type: Array,
         required: true,
         default: []
       },
       grid: {
-        type: Boolean, // Number, Array, Object, Boolean
+        type: Boolean,
         required: true,
         default: true
       }
     },
     methods: {
-      async removeNote(index) {
-        await this.$store.dispatch('removeNote', index)
-      }
+      removeNote(index) {
+        this.$store.dispatch('removeNote', index)
+      },
+      changeNote(index, type) {
+        this.$store.dispatch('changeNote', {index, type})
+      },
+      saveNote(index, type) {
+        this.$store.dispatch('saveNote', {index, type})
+      },
+      exitChangeNote(index, type) {
+        this.$store.dispatch('exitChangeNote', {index, type})
+      },
     }
   }
 </script>

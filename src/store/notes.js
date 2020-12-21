@@ -9,7 +9,7 @@ export default {
     notes: [
       {
         title: 'First Note',
-        descr: 'DEscription for first note',
+        descr: 'Description for first note',
         date: new Date(Date.now()).toLocaleString(),
         priority: 'standart',
         change: {
@@ -19,7 +19,7 @@ export default {
       },
       {
         title: 'Second Note',
-        descr: 'DEscription for second note',
+        descr: 'Description for second note',
         date: new Date(Date.now()).toLocaleString(),
         priority: 'standart',
         change: {
@@ -29,7 +29,7 @@ export default {
       },
       {
         title: 'Third Note',
-        descr: 'DEscription for third note',
+        descr: 'Description for third note',
         date: new Date(Date.now()).toLocaleString(),
         priority: 'standart',
         change: {
@@ -42,12 +42,17 @@ export default {
   mutations: {
     addNote(state, data) {
 
-      let {title, descr} = data
+      let {title, descr, priority} = data
 
       state.notes.push({
         title,
         descr,
-        date: new Date(Date.now()).toLocaleString()
+        date: new Date(Date.now()).toLocaleString(),
+        priority,
+        change: {
+          title: '',
+          descr: '',
+        }
       })
     },
     removeNote(state, index) {
@@ -58,6 +63,52 @@ export default {
     },
     removeMessage(state) {
       state.message = null
+    },
+    changeNote(state, data) {
+      let note = state.notes[data.index]
+
+      switch (data.type) {
+        case 'title':
+          note.change.title = note.title
+          break
+        case 'descr':
+          note.change.descr = note.descr
+          break
+        default:
+          break
+      }
+    },
+    saveNote(state, data) {
+      let note = state.notes[data.index]
+
+      switch (data.type) {
+        case 'title':
+          note.title = note.change.title
+          note.date = new Date(Date.now()).toLocaleString()
+          note.change.title = ''
+          break
+        case 'descr':
+          note.descr = note.change.descr
+          note.date = new Date(Date.now()).toLocaleString()
+          note.change.descr = ''
+          break
+        default:
+          break
+      }
+    },
+    exitChangeNote(state, data) {
+      let note = state.notes[data.index]
+
+      switch (data.type) {
+        case 'title':
+          note.change.title = ''
+          break
+        case 'descr':
+          note.change.descr = ''
+          break
+        default:
+          break
+      }
     }
   },
   actions: {
@@ -72,6 +123,15 @@ export default {
     },
     removeMessage({commit}) {
       commit('removeMessage')
+    },
+    changeNote({commit}, payload) {
+      commit('changeNote', payload)
+    },
+    saveNote({commit}, payload) {
+      commit('saveNote', payload)
+    },
+    exitChangeNote({commit}, payload) {
+      commit('exitChangeNote', payload)
     }
   },
   getters: {

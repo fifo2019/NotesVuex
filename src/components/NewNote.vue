@@ -44,22 +44,29 @@
       }
     },
     methods: {
-      async addNote() {
+      addNote() {
+ 
+        if (this.checkTitle() === false) return false
 
-        if (this.note.title === '') {
+        this.$store.dispatch('addNote', this.note)
+        
+        this.resetNote()
+      },
+      checkTitle() {
+        if (this.note.title.trim() === '') {
           let textMessage = 'title can`t blank'
-          await this.$store.dispatch('setMessage', textMessage)
+          this.$store.dispatch('setMessage', textMessage)
           return false
         }
-
-        await this.$store.dispatch('addNote', this.note)
-
-        await this.$store.dispatch('removeMessage')
-
+      },
+      resetNote() {
         this.note.title = ''
         this.note.descr = ''
+        this.note.priority = 'standart'
+
+        this.$store.dispatch('removeMessage')
       }
-    }
+    },
   }
 </script>
 
